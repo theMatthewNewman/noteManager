@@ -8,6 +8,7 @@ from pathlib import Path
 import time
 
 NOTES_FILE = Path.home() / ".terminal_notes" / "notes.json"
+NOTES_PROGRAM_FILE = os.path.dirname(os.path.abspath(__file__))
 NOTES_FILE.parent.mkdir(parents=True, exist_ok=True)
 
 if not NOTES_FILE.exists():
@@ -154,6 +155,12 @@ def remove_tag(identifier, tag):
         save_notes(notes)
     except (IndexError, ValueError):
         print("⚠️ Invalid note index.")
+
+
+def upload_notes():
+        subprocess.run(["git", "add", "--all"], cwd=NOTES_PROGRAM_FILE, check=True)
+        subprocess.run(["git", "commit", "-m", "changed notes"], cwd=NOTES_PROGRAM_FILE, check=True)
+        subprocess.run(["git", "push", "origin", "main"], cwd=NOTES_PROGRAM_FILE, check=True)
 # user experience
 
 def print_note_search(query):
@@ -193,6 +200,7 @@ def print_usage():
 
 
 def main():
+    print(sys.argv)
     if len(sys.argv) < 2:
         print_usage()
         sys.exit(1)
@@ -235,6 +243,9 @@ def main():
     elif cmd == 'remove_tag':
         if len(sys.argv) == 3:
             remove_tag(sys.argv[2], sys.argv[3])
+        return
+    elif cmd == 'save':
+        upload_notes()
         return
     elif len(sys.argv) == 2:
         execute_note(sys.argv[1])
