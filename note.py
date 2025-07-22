@@ -161,9 +161,9 @@ def upload_notes():
     subprocess.run(["git", "add", "--all"], cwd=NOTES_PROGRAM_FILE, check=True)
     subprocess.run(["git", "commit", "-m", "changed notes"], cwd=NOTES_PROGRAM_FILE, check=True)
     subprocess.run(["git", "push", "origin", "main"], cwd=NOTES_PROGRAM_FILE, check=True)
-    subprocess.run(["git", "add", "--all"], cwd=NOTES_FILE, check=True)
-    subprocess.run(["git", "commit", "-m", "changed notes"], cwd=NOTES_FILE, check=True)
-    subprocess.run(["git", "push", "origin", "main"], cwd=NOTES_FILE, check=True)
+    subprocess.run(["git", "add", "--all"], cwd=os.path.dirname(NOTES_FILE), check=True)
+    subprocess.run(["git", "commit", "-m", "changed notes"], cwd=os.path.dirname(NOTES_FILE), check=True)
+    subprocess.run(["git", "push", "origin", "main"], cwd=os.path.dirname(NOTES_FILE), check=True)
 # user experience
 
 def print_note_search(query):
