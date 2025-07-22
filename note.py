@@ -158,12 +158,28 @@ def remove_tag(identifier, tag):
 
 
 def upload_notes():
-    subprocess.run(["git", "add", "--all"], cwd=NOTES_PROGRAM_FILE, check=True)
-    subprocess.run(["git", "commit", "-m", "changed notes"], cwd=NOTES_PROGRAM_FILE, check=True)
-    subprocess.run(["git", "push", "origin", "main"], cwd=NOTES_PROGRAM_FILE, check=True)
-    subprocess.run(["git", "add", "--all"], cwd=os.path.dirname(NOTES_FILE), check=True)
-    subprocess.run(["git", "commit", "-m", "changed notes"], cwd=os.path.dirname(NOTES_FILE), check=True)
-    subprocess.run(["git", "push", "origin", "main"], cwd=os.path.dirname(NOTES_FILE), check=True)
+    for repo_dir in [NOTES_PROGRAM_FILE, os.path.dirname(NOTES_FILE)]:
+        try:
+            subprocess.run(["git", "add", "--all"], cwd=repo_dir, check=True)
+
+            if has_changes_to_commit(repo_dir):
+                subprocess.run(["git", "commit", "-m", "changed notes"], cwd=repo_dir, check=True)
+                subprocess.run(["git", "push", "origin", "main"], cwd=repo_dir, check=True)
+            else:
+                print(f"No changes to commit in {repo_dir}")
+
+        except subprocess.CalledProcessError as e:
+            print(f"Git command failed in {repo_dir}:", e)
+
+def download_notes():
+    for repo_dir in [NOTES_PROGRAM_FILE, os.path.dirname(NOTES_FILE)]:
+        subprocess.run(["git", "pull", "origin", "main"], cwd=repo_dir, check=True)
+
+def has_changes_to_commit(repo_dir):
+    unstaged = subprocess.run(["git", "diff", "--quiet"], cwd=repo_dir)
+    staged = subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=repo_dir)
+    return unstaged.returncode != 0 or staged.returncode != 0
+
 # user experience
 
 def print_note_search(query):
@@ -249,6 +265,9 @@ def main():
         return
     elif cmd == 'save':
         upload_notes()
+        return
+    elif cmd == 'pull':
+        download_notes()
         return
     elif len(sys.argv) == 2:
         execute_note(sys.argv[1])
