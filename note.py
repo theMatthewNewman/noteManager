@@ -215,6 +215,8 @@ def print_usage():
   notes.py remove index
   notes.py run index
   notes.py ask "question"
+  notes.py pull - pull notes from repo
+  notes.py save - push notes to repo
     """)
 
 
