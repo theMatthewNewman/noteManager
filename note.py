@@ -189,16 +189,12 @@ def print_note_search(query):
 
 
 def print_note(note):
-    preview = note["body"].split("\n")[0]
-    if len(preview) > 30:
-        preview = preview[:27] + "..."
-    print(f"{note["id"]}: ({note['date']}) {preview} [tags: {', '.join(note['tags'])}]")
+    print(f"{note["id"]}: ({note['date']}) {note["body"]} [tags: {', '.join(note['tags'])}]")
 
 def list_notes():
     notes = load_notes()
     for i, note in enumerate(notes):
-        preview = note["body"].split("\n")[0]
-        print(f"{i}: {note['date']} {preview} [tags: {', '.join(note['tags'])}]")
+        print(f"{i}: {note['date']} {note["body"]} [tags: {', '.join(note['tags'])}]")
 
 def print_add_note(body, tags):
     add_note(body, tags)
